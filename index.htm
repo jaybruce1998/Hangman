@@ -1,0 +1,74 @@
+<html>
+	<head><title>Hangman</title></head>
+	<body>
+		<script type="text/javascript">
+			var man, word, hidden, guessed, over=true;
+			function start()
+			{
+				word=document.getElementById("new").value.toUpperCase().split("").join(" ");
+				hidden=word.replace(/[A-Z]/g, "_");
+				document.getElementById("new").value='';
+				if(word==hidden)
+				{
+					alert("You must type a word with at least one letter!");
+					return;
+				}
+				over=false;
+				guessed='';
+				document.getElementById("letters").innerHTML="None yet!";
+				document.getElementById("word").innerHTML=hidden;
+				man=0;
+				document.getElementById("man").src=man+".png";
+			}
+			function guess()
+			{
+				if(over)
+				{
+					alert("There is not currently a game happening!");
+					return;
+				}
+				let guess=document.getElementById("letter").value.toUpperCase();
+				document.getElementById("letter").value='';
+				if(guess.length!=1||guess.match(/[^A-Z]/))
+				{
+					alert("You must guess exactly one letter!");
+					return;
+				}
+				guess=guess[0];
+				let i=word.indexOf(guess);
+				if(guessed.indexOf(guess)<0)
+				{
+					guessed+=guess;
+					document.getElementById("letters").innerHTML=guessed;
+					if(i<0)
+					{
+						document.getElementById("man").src=++man+".png";
+						if(man==7)
+						{
+							over=true;
+							alert("You lose!");
+						}
+					}
+					else
+					{
+						for(; i>=0; i=word.indexOf(guess, i))
+							hidden=hidden.substring(0, i)+guess+hidden.substring(i+1);
+						document.getElementById("word").innerHTML=hidden;
+						if(hidden.indexOf("_")<0)
+						{
+							over=true;
+							alert("You won!");
+						}
+					}
+				}
+				else
+					alert("You have already guessed that letter!");
+			}
+		</script>
+		<img id="man" src="7.png"/><br/>
+		Guessed Letters:<p id="letters">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+		<h1 id="word">Enter a word to start the game!</h1><br/>
+		<input id="new" type="text"/><button onclick="start();">Start</button><br/>
+		<input id="letter" type="text"/><button onclick="guess();">Guess</button>
+	</body>
+</html>
